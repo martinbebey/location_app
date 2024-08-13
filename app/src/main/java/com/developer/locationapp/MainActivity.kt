@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import android.Manifest
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
@@ -27,13 +28,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val locationVM by viewModels<LocationViewModel>()
+
             LocationAppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    LocationApp()
+                    LocationApp(locationVM)
                 }
             }
         }
@@ -41,14 +44,14 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun LocationApp(){
+fun LocationApp(viewModel: LocationViewModel){
     val context = LocalContext.current
     val locationUtil = LocationUtil(context = context)
-    LocationDisplay(locationUtils = locationUtil, context = context)
+    LocationDisplay(locationUtils = locationUtil, context = context, viewModel = viewModel)
 }
 
 @Composable
-fun LocationDisplay(locationUtils: LocationUtil, context: Context) {
+fun LocationDisplay(locationUtils: LocationUtil, context: Context, viewModel: LocationViewModel) {
 
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
@@ -91,8 +94,8 @@ fun LocationDisplay(locationUtils: LocationUtil, context: Context) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun LocationAppPreview(){
-    LocationApp()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun LocationAppPreview(){
+//    LocationApp()
+//}
