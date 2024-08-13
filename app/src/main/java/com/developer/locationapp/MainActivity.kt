@@ -54,6 +54,9 @@ fun LocationApp(viewModel: LocationViewModel){
 fun LocationDisplay(locationUtils: LocationUtil, context: Context, viewModel: LocationViewModel) {
     
     val location = viewModel.location.value
+    val address = location?.let {
+        locationUtils.reverseGeocodeLocation(location, context)
+    }
 
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
@@ -80,7 +83,7 @@ fun LocationDisplay(locationUtils: LocationUtil, context: Context, viewModel: Lo
         verticalArrangement = Arrangement.Center
     ){
         if(location != null){
-            Text(text = "Address: ${location.latitude} ${location.longitude}")
+            Text(text = "Coordinates: Lat:${location.latitude} Long:${location.longitude} \n Address: $address")
         }
         else{
             Text(text = "Location not available")
