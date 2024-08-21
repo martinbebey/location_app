@@ -19,6 +19,7 @@ import java.util.Locale
 
 class LocationUtil(context: Context) {
     private val _fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
+    val context = context
 
     @SuppressLint("MissingPermission")
     fun requestLocationUpdates(viewModel: LocationViewModel){
@@ -26,7 +27,7 @@ class LocationUtil(context: Context) {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
                 locationResult.lastLocation?.let{
-                    val location = LocationData(it.latitude, it.longitude)
+                    val location = LocationData(it.latitude, it.longitude, reverseGeocodeLocation(it.latitude, it.longitude, context))
                     viewModel.updateLocation(location)
                 }
             }
@@ -42,9 +43,9 @@ class LocationUtil(context: Context) {
                 ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
-    fun reverseGeocodeLocation(location: LocationData, context: Context): String{
+    fun reverseGeocodeLocation(latitude: Double, longitude: Double, context: Context): String{
         val geocoder = Geocoder(context, Locale.getDefault())
-        val coordinate = LatLng(location.latitude, location.longitude)
+        val coordinate = LatLng(latitude, longitude)
         val addresses: MutableList<Address>? = geocoder.getFromLocation(coordinate.latitude, coordinate.longitude, 1)
 
         return if(addresses?.isNotEmpty() == true){
